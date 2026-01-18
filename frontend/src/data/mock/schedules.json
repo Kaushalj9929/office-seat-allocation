@@ -1,0 +1,54 @@
+{
+  "id": "schedule-001",
+  "week_start_date": "2024-01-08",
+  "week_end_date": "2024-01-12",
+  "status": "published",
+  "created_at": "2024-01-05T10:00:00Z",
+  "published_at": "2024-01-05T10:00:00Z",
+  "version": 1,
+  "entries": [
+    {
+      "id": "entry-001",
+      "schedule_id": "schedule-001",
+      "employee_id": "emp-001",
+      "day_of_week": 0,
+      "work_type": "office",
+      "seat_id": "seat-001",
+      "status": "assigned"
+    },
+    {
+      "id": "entry-002",
+      "schedule_id": "schedule-001",
+      "employee_id": "emp-001",
+      "day_of_week": 1,
+      "work_type": "wfh",
+      "status": "assigned"
+    },
+    {
+      "id": "entry-003",
+      "schedule_id": "schedule-001",
+      "employee_id": "emp-001",
+      "day_of_week": 2,
+      "work_type": "office",
+      "seat_id": "seat-002",
+      "status": "assigned"
+    },
+    {
+      "id": "entry-004",
+      "schedule_id": "schedule-001",
+      "employee_id": "emp-001",
+      "day_of_week": 3,
+      "work_type": "wfh",
+      "status": "assigned"
+    },
+    {
+      "id": "entry-005",
+      "schedule_id": "schedule-001",
+      "employee_id": "emp-001",
+      "day_of_week": 4,
+      "work_type": "office",
+      "seat_id": "seat-003",
+      "status": "assigned"
+    }
+  ]
+}

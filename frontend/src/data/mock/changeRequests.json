@@ -1,0 +1,25 @@
+{
+  "data": [
+    {
+      "id": "req-001",
+      "employee_id": "emp-001",
+      "current_day": 0,
+      "requested_day": 2,
+      "reason": "Need to attend important meeting",
+      "status": "pending",
+      "requested_date": "2024-01-05T10:00:00Z"
+    },
+    {
+      "id": "req-002",
+      "employee_id": "emp-003",
+      "current_day": 1,
+      "requested_day": 3,
+      "reason": "Personal appointment",
+      "status": "approved",
+      "requested_date": "2024-01-04T10:00:00Z",
+      "decision_date": "2024-01-05T10:00:00Z",
+      "decision_reason": "Approved"
+    }
+  ]
+}
+

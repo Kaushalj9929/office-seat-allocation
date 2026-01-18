@@ -1,0 +1,21 @@
+{
+  "data": [
+    {
+      "id": "team-001",
+      "name": "Engineering Team",
+      "description": "Software development team",
+      "team_lead_id": "emp-002",
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    },
+    {
+      "id": "team-002",
+      "name": "Design Team",
+      "description": "UI/UX design team",
+      "team_lead_id": "emp-003",
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  ]
+}
+
