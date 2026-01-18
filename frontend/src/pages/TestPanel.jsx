@@ -152,28 +152,28 @@ function TestPanel() {
   }
 
   return (
-    <Box minH="100vh" bgGradient="linear(to-r, cyan.400, purple.500)" py={10}>
+    <Box minH="100vh" bg="gray.50" py={6}>
       <Container maxW="container.xl">
-        <VStack spacing={8}>
+        <VStack spacing={4}>
           {/* Header */}
-          <Box bg="white" p={6} borderRadius="5px" boxShadow="sm" w="100%" border="1px solid" borderColor="gray.200">
-            <Heading fontSize="1.75rem" bgGradient="linear(to-r, cyan.400, purple.500)" bgClip="text" mb={2} fontWeight="500" letterSpacing="-0.02em">
+          <Box bg="white" p={4} borderRadius="5px" boxShadow="sm" w="100%" border="1px solid" borderColor="gray.200">
+            <Heading fontSize="1.25rem" bgGradient="linear(to-r, purple.600, pink.600)" bgClip="text" mb={1.5} fontWeight="500" letterSpacing="-0.02em">
               Test Panel
             </Heading>
-            <Text color="gray.600" fontSize="0.875rem" fontWeight="400">
+            <Text color="gray.600" fontSize="0.75rem" fontWeight="400">
               Quick access to test users and add new users for testing
             </Text>
           </Box>
 
           {/* Quick Login Section */}
-          <Box bg="white" p={6} borderRadius="5px" boxShadow="sm" w="100%" border="1px solid" borderColor="gray.200">
-            <Heading fontSize="1.25rem" mb={3} color="gray.800" fontWeight="500" letterSpacing="-0.01em">
+          <Box bg="white" p={4} borderRadius="5px" boxShadow="sm" w="100%" border="1px solid" borderColor="gray.200">
+            <Heading fontSize="1rem" mb={2} color="gray.800" fontWeight="500" letterSpacing="-0.01em">
               Quick Login
             </Heading>
-            <Text color="gray.600" mb={5} fontSize="0.875rem" fontWeight="400">
+            <Text color="gray.600" mb={4} fontSize="0.75rem" fontWeight="400">
               Click on any user below to quickly login as that user
             </Text>
-            <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }} gap={4}>
+            <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }} gap={3}>
               {testUsers.map((user, index) => (
                 <GridItem key={index}>
                   <Card
@@ -182,21 +182,21 @@ function TestPanel() {
                     border="1px solid"
                     borderColor="gray.200"
                     _hover={{
-                      transform: 'translateY(-2px)',
+                      transform: 'translateY(-1px)',
                       boxShadow: 'md',
                     }}
                     transition="all 0.2s"
                     onClick={() => handleQuickLogin(user)}
                   >
-                    <CardBody p={4}>
-                      <VStack spacing={3} align="start">
+                    <CardBody p={3}>
+                      <VStack spacing={2} align="start">
                         <HStack justify="space-between" w="100%">
-                          <Text fontWeight="500" fontSize="0.9375rem" color="gray.800">
+                          <Text fontWeight="500" fontSize="0.75rem" color="gray.800">
                             {user.name}
                           </Text>
                           <Badge 
                             colorScheme={getRoleColor(user.role)}
-                            fontSize="0.6875rem"
+                            fontSize="0.625rem"
                             fontWeight="500"
                             borderRadius="5px"
                             px={2}
@@ -205,21 +205,28 @@ function TestPanel() {
                             {user.role}
                           </Badge>
                         </HStack>
-                        <Text fontSize="0.8125rem" color="gray.600" fontWeight="400">
+                        <Text fontSize="0.6875rem" color="gray.600" fontWeight="400">
                           {user.email}
                         </Text>
                         <Button
                           size="sm"
-                          colorScheme="blue"
+                          bgGradient="linear(to-r, purple.500, pink.500)"
+                          color="white"
                           rightIcon={<ArrowForwardIcon />}
                           w="100%"
                           onClick={(e) => {
                             e.stopPropagation()
                             handleQuickLogin(user)
                           }}
-                          fontSize="0.8125rem"
+                          fontSize="0.6875rem"
                           fontWeight="500"
                           borderRadius="5px"
+                          py={3}
+                          _hover={{
+                            bgGradient: 'linear(to-r, purple.600, pink.600)',
+                            transform: 'translateY(-1px)',
+                            boxShadow: 'md',
+                          }}
                         >
                           Login
                         </Button>
@@ -231,49 +238,59 @@ function TestPanel() {
             </Grid>
           </Box>
 
-          <Divider borderColor="whiteAlpha.300" />
+          <Divider borderColor="gray.200" />
 
           {/* Add User Section */}
-          <Box bg="white" p={6} borderRadius="5px" boxShadow="sm" w="100%" border="1px solid" borderColor="gray.200">
-            <Heading fontSize="1.25rem" mb={4} color="gray.800" fontWeight="500" letterSpacing="-0.01em">
+          <Box bg="white" p={4} borderRadius="5px" boxShadow="sm" w="100%" border="1px solid" borderColor="gray.200">
+            <Heading fontSize="1rem" mb={3} color="gray.800" fontWeight="500" letterSpacing="-0.01em">
               Add New User
             </Heading>
-            <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={4} mb={4}>
+            <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={3} mb={3}>
               <FormControl>
-                <FormLabel fontSize="0.875rem" fontWeight="500" color="gray.700">Name</FormLabel>
+                <FormLabel fontSize="0.75rem" fontWeight="500" color="gray.700">Name</FormLabel>
                 <Input
                   placeholder="Enter user name"
                   value={newUser.name}
                   onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
-                  fontSize="0.875rem"
+                  fontSize="0.75rem"
                   borderRadius="5px"
+                  size="sm"
+                  py={4}
                 />
               </FormControl>
               <FormControl>
-                <FormLabel fontSize="0.875rem" fontWeight="500" color="gray.700">Email</FormLabel>
+                <FormLabel fontSize="0.75rem" fontWeight="500" color="gray.700">Email</FormLabel>
                 <Input
                   type="email"
                   placeholder="Enter email address"
                   value={newUser.email}
                   onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-                  fontSize="0.875rem"
+                  fontSize="0.75rem"
                   borderRadius="5px"
+                  size="sm"
+                  py={4}
                 />
               </FormControl>
               <FormControl>
-                <FormLabel fontSize="0.875rem" fontWeight="500" color="gray.700">Role</FormLabel>
+                <FormLabel fontSize="0.75rem" fontWeight="500" color="gray.700">Role</FormLabel>
                 <HStack spacing={2}>
                   {['employee', 'team_lead', 'admin'].map((role) => (
                     <Button
                       key={role}
                       size="sm"
-                      colorScheme={newUser.role === role ? 'blue' : 'gray'}
+                      bgGradient={newUser.role === role ? 'linear(to-r, purple.500, pink.500)' : 'transparent'}
+                      color={newUser.role === role ? 'white' : 'gray.700'}
                       variant={newUser.role === role ? 'solid' : 'outline'}
                       onClick={() => setNewUser({ ...newUser, role })}
                       textTransform="capitalize"
-                      fontSize="0.8125rem"
+                      fontSize="0.6875rem"
                       fontWeight="500"
                       borderRadius="5px"
+                      borderColor="gray.300"
+                      _hover={{
+                        bgGradient: newUser.role === role ? 'linear(to-r, purple.600, pink.600)' : 'linear(to-r, purple.50, pink.50)',
+                        borderColor: 'purple.500',
+                      }}
                     >
                       {role}
                     </Button>
@@ -284,41 +301,58 @@ function TestPanel() {
             <Button
               leftIcon={<AddIcon />}
               onClick={handleAddUser}
-              size="md"
+              size="sm"
               w="100%"
-              bgGradient="linear(to-r, green.400, teal.500)"
+              bgGradient="linear(to-r, green.500, teal.600)"
               color="white"
               _hover={{
-                bgGradient: 'linear(to-r, green.500, teal.600)',
-                transform: 'translateY(-2px)',
+                bgGradient: 'linear(to-r, green.600, teal.700)',
+                transform: 'translateY(-1px)',
                 boxShadow: 'md',
               }}
-              fontSize="0.875rem"
+              fontSize="0.75rem"
               fontWeight="500"
               borderRadius="5px"
+              py={4}
             >
               Add User
             </Button>
           </Box>
 
           {/* Navigation */}
-          <Box bg="white" p={4} borderRadius="5px" boxShadow="sm" w="100%" border="1px solid" borderColor="gray.200">
-            <HStack spacing={4} justify="center">
+          <Box bg="white" p={3} borderRadius="5px" boxShadow="sm" w="100%" border="1px solid" borderColor="gray.200">
+            <HStack spacing={3} justify="center">
               <Button 
                 variant="outline" 
                 onClick={() => navigate('/')}
-                fontSize="0.875rem"
+                fontSize="0.75rem"
                 fontWeight="500"
                 borderRadius="5px"
+                size="sm"
+                py={3}
+                borderColor="gray.300"
+                _hover={{
+                  bg: 'gray.50',
+                  borderColor: 'purple.500',
+                  color: 'purple.600',
+                }}
               >
                 Landing Page
               </Button>
               <Button 
                 variant="outline" 
                 onClick={() => navigate('/login')}
-                fontSize="0.875rem"
+                fontSize="0.75rem"
                 fontWeight="500"
                 borderRadius="5px"
+                size="sm"
+                py={3}
+                borderColor="gray.300"
+                _hover={{
+                  bg: 'gray.50',
+                  borderColor: 'purple.500',
+                  color: 'purple.600',
+                }}
               >
                 Login Page
               </Button>

@@ -27,8 +27,8 @@ function TeamList() {
 
   if (isLoading) {
     return (
-      <Box display="flex" justifyContent="center" p={8}>
-        <Spinner size="xl" />
+      <Box display="flex" justifyContent="center" alignItems="center" minH="400px">
+        <Spinner size="xl" color="purple.500" />
       </Box>
     )
   }
