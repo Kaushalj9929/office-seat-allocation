@@ -1,7 +1,7 @@
 {
 	"info": {
-		"name": "Office Seat Allocation API",
-		"description": "Complete API collection for Office Workspace Seat Allocation System - Phase 1",
+		"name": "Office Seat Allocation API - Complete",
+		"description": "Complete API collection for Office Workspace Seat Allocation System - Phase 1 & Phase 2 (Sub-Phase 2.1 & 2.2)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"variable": [
@@ -32,8 +32,7 @@
 							"port": "8088",
 							"path": ["health"]
 						}
-					},
-					"response": []
+					}
 				}
 			]
 		},
@@ -41,7 +40,7 @@
 			"name": "Authentication",
 			"item": [
 				{
-					"name": "Login",
+					"name": "Login - Admin",
 					"event": [
 						{
 							"listen": "test",
@@ -66,18 +65,17 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"admin@example.com\",\n    \"password\": \"password123\"\n}"
+							"raw": "{\n    \"email\": \"admin@example.com\",\n    \"password\": \"admin123\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/auth/login",
 							"host": ["{{baseUrl}}"],
 							"path": ["auth", "login"]
 						}
-					},
-					"response": []
+					}
 				},
 				{
-					"name": "Refresh Token",
+					"name": "Login - Manager",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -88,15 +86,52 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"refresh_token\": \"eyJhbGc...\"\n}"
+							"raw": "{\n    \"email\": \"sarah.johnson@example.com\",\n    \"password\": \"manager123\"\n}"
 						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "login"]
+						}
+					}
+				},
+				{
+					"name": "Login - Employee",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"James.Smith@example.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "login"]
+						}
+					}
+				},
+				{
+					"name": "Refresh Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
 						"url": {
 							"raw": "{{baseUrl}}/auth/refresh",
 							"host": ["{{baseUrl}}"],
 							"path": ["auth", "refresh"]
 						}
-					},
-					"response": []
+					}
 				},
 				{
 					"name": "Logout",
@@ -113,8 +148,7 @@
 							"host": ["{{baseUrl}}"],
 							"path": ["auth", "logout"]
 						}
-					},
-					"response": []
+					}
 				}
 			]
 		},
@@ -143,21 +177,10 @@
 								{
 									"key": "limit",
 									"value": "20"
-								},
-								{
-									"key": "team_id",
-									"value": "",
-									"disabled": true
-								},
-								{
-									"key": "status",
-									"value": "active",
-									"disabled": true
 								}
 							]
 						}
-					},
-					"response": []
+					}
 				},
 				{
 					"name": "Get Employee by ID",
@@ -176,12 +199,11 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "employee-uuid-here"
+									"value": "fd1e19c3-90ad-4b91-aef6-71dc322c43c5"
 								}
 							]
 						}
-					},
-					"response": []
+					}
 				},
 				{
 					"name": "Create Employee",
@@ -199,15 +221,14 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"john.doe@example.com\",\n    \"name\": \"John Doe\",\n    \"password\": \"password123\",\n    \"team_id\": \"team-uuid-here\",\n    \"role\": \"employee\",\n    \"status\": \"active\"\n}"
+							"raw": "{\n    \"email\": \"new.employee@example.com\",\n    \"name\": \"New Employee\",\n    \"password\": \"password123\",\n    \"team_id\": \"aa89086f-b225-4a8f-842d-e289a472d7c1\",\n    \"role\": \"employee\",\n    \"status\": \"active\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/admin/employees",
 							"host": ["{{baseUrl}}"],
 							"path": ["admin", "employees"]
 						}
-					},
-					"response": []
+					}
 				},
 				{
 					"name": "Update Employee",
@@ -225,7 +246,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"John Doe Updated\",\n    \"team_id\": \"team-uuid-here\",\n    \"status\": \"active\",\n    \"role\": \"team_lead\"\n}"
+							"raw": "{\n    \"name\": \"Updated Employee Name\",\n    \"status\": \"active\",\n    \"role\": \"manager\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/admin/employees/:id",
@@ -234,12 +255,11 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "employee-uuid-here"
+									"value": "0fcdf694-f73e-4cc4-8b2c-afbaae551c8a"
 								}
 							]
 						}
-					},
-					"response": []
+					}
 				},
 				{
 					"name": "Delete Employee",
@@ -262,34 +282,7 @@
 								}
 							]
 						}
-					},
-					"response": []
-				},
-				{
-					"name": "Bulk Import Employees",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{token}}"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"employees\": [\n        {\n            \"email\": \"emp1@example.com\",\n            \"name\": \"Employee One\",\n            \"password\": \"password123\",\n            \"team_id\": \"team-uuid-here\",\n            \"role\": \"employee\"\n        },\n        {\n            \"email\": \"emp2@example.com\",\n            \"name\": \"Employee Two\",\n            \"password\": \"password123\",\n            \"team_id\": \"team-uuid-here\",\n            \"role\": \"employee\"\n        }\n    ]\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/admin/employees/bulk-import",
-							"host": ["{{baseUrl}}"],
-							"path": ["admin", "employees", "bulk-import"]
-						}
-					},
-					"response": []
+					}
 				}
 			]
 		},
@@ -307,22 +300,11 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/admin/teams?page=1&limit=20",
+							"raw": "{{baseUrl}}/admin/teams",
 							"host": ["{{baseUrl}}"],
-							"path": ["admin", "teams"],
-							"query": [
-								{
-									"key": "page",
-									"value": "1"
-								},
-								{
-									"key": "limit",
-									"value": "20"
-								}
-							]
+							"path": ["admin", "teams"]
 						}
-					},
-					"response": []
+					}
 				},
 				{
 					"name": "Get Team by ID",
@@ -341,12 +323,11 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "team-uuid-here"
+									"value": "aa89086f-b225-4a8f-842d-e289a472d7c1"
 								}
 							]
 						}
-					},
-					"response": []
+					}
 				},
 				{
 					"name": "Create Team",
@@ -364,15 +345,14 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Engineering Team\",\n    \"description\": \"Software Engineering Team\",\n    \"team_lead_id\": \"employee-uuid-here\",\n    \"preferences\": {\n        \"preferred_days\": [0, 2, 4]\n    }\n}"
+							"raw": "{\n    \"name\": \"Data Science Team\",\n    \"description\": \"Data Science and Analytics Team\",\n    \"preferences\": {\"preferred_days\": [1, 3, 5]}\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/admin/teams",
 							"host": ["{{baseUrl}}"],
 							"path": ["admin", "teams"]
 						}
-					},
-					"response": []
+					}
 				},
 				{
 					"name": "Update Team",
@@ -390,7 +370,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Engineering Team Updated\",\n    \"description\": \"Updated description\",\n    \"team_lead_id\": \"employee-uuid-here\"\n}"
+							"raw": "{\n    \"name\": \"Engineering Team Updated\",\n    \"description\": \"Updated description\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/admin/teams/:id",
@@ -399,12 +379,11 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "team-uuid-here"
+									"value": "aa89086f-b225-4a8f-842d-e289a472d7c1"
 								}
 							]
 						}
-					},
-					"response": []
+					}
 				},
 				{
 					"name": "Delete Team",
@@ -427,8 +406,7 @@
 								}
 							]
 						}
-					},
-					"response": []
+					}
 				},
 				{
 					"name": "Get Team Members",
@@ -447,12 +425,11 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "team-uuid-here"
+									"value": "aa89086f-b225-4a8f-842d-e289a472d7c1"
 								}
 							]
 						}
-					},
-					"response": []
+					}
 				}
 			]
 		},
@@ -460,7 +437,7 @@
 			"name": "Admin - Schedules",
 			"item": [
 				{
-					"name": "Generate Schedule",
+					"name": "Generate Schedule (Basic)",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -475,15 +452,56 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"week_start_date\": \"2024-01-08\",\n    \"week_end_date\": \"2024-01-12\"\n}"
+							"raw": "{\n    \"week_start_date\": \"2026-04-20\",\n    \"week_end_date\": \"2026-04-24\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/admin/schedules/generate",
 							"host": ["{{baseUrl}}"],
 							"path": ["admin", "schedules", "generate"]
 						}
-					},
-					"response": []
+					}
+				},
+				{
+					"name": "Generate Schedule (Advanced with Fairness)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"week_start_date\": \"2026-04-27\",\n    \"week_end_date\": \"2026-05-01\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/admin/schedules/generate-advanced",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "schedules", "generate-advanced"]
+						}
+					}
+				},
+				{
+					"name": "Get All Schedules",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/admin/schedules",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "schedules"]
+						}
+					}
 				},
 				{
 					"name": "Get Schedule by ID",
@@ -502,15 +520,14 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "schedule-uuid-here"
+									"value": "72b83a75-da8a-4128-9b8b-2a218de148c6"
 								}
 							]
 						}
-					},
-					"response": []
+					}
 				},
 				{
-					"name": "Get All Schedules",
+					"name": "Get Fairness Metrics",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -520,50 +537,40 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/admin/schedules?status=published",
+							"raw": "{{baseUrl}}/admin/schedules/:id/fairness",
 							"host": ["{{baseUrl}}"],
-							"path": ["admin", "schedules"],
-							"query": [
+							"path": ["admin", "schedules", ":id", "fairness"],
+							"variable": [
 								{
-									"key": "status",
-									"value": "published"
+									"key": "id",
+									"value": "72b83a75-da8a-4128-9b8b-2a218de148c6"
 								}
 							]
 						}
-					},
-					"response": []
+					}
 				},
 				{
-					"name": "Update Schedule",
+					"name": "Get Fairness Report",
 					"request": {
-						"method": "PUT",
+						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
 								"value": "Bearer {{token}}"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"entries\": [\n        {\n            \"employee_id\": \"employee-uuid-here\",\n            \"day_of_week\": 0,\n            \"work_type\": \"office\"\n        }\n    ]\n}"
-						},
 						"url": {
-							"raw": "{{baseUrl}}/admin/schedules/:id",
+							"raw": "{{baseUrl}}/admin/schedules/:id/fairness-report",
 							"host": ["{{baseUrl}}"],
-							"path": ["admin", "schedules", ":id"],
+							"path": ["admin", "schedules", ":id", "fairness-report"],
 							"variable": [
 								{
 									"key": "id",
-									"value": "schedule-uuid-here"
+									"value": "72b83a75-da8a-4128-9b8b-2a218de148c6"
 								}
 							]
 						}
-					},
-					"response": []
+					}
 				},
 				{
 					"name": "Publish Schedule",
@@ -582,17 +589,16 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "schedule-uuid-here"
+									"value": "72b83a75-da8a-4128-9b8b-2a218de148c6"
 								}
 							]
 						}
-					},
-					"response": []
+					}
 				},
 				{
-					"name": "Get Schedule Entries",
+					"name": "Delete Schedule",
 					"request": {
-						"method": "GET",
+						"method": "DELETE",
 						"header": [
 							{
 								"key": "Authorization",
@@ -600,9 +606,9 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/admin/schedules/:id/entries",
+							"raw": "{{baseUrl}}/admin/schedules/:id",
 							"host": ["{{baseUrl}}"],
-							"path": ["admin", "schedules", ":id", "entries"],
+							"path": ["admin", "schedules", ":id"],
 							"variable": [
 								{
 									"key": "id",
@@ -610,16 +616,15 @@
 								}
 							]
 						}
-					},
-					"response": []
+					}
 				}
 			]
 		},
 		{
-			"name": "Employee - Schedule",
+			"name": "Admin - Change Requests",
 			"item": [
 				{
-					"name": "Get My Schedule",
+					"name": "Get All Change Requests",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -629,36 +634,272 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/employee/schedule",
+							"raw": "{{baseUrl}}/admin/change-requests?status=pending",
 							"host": ["{{baseUrl}}"],
-							"path": ["employee", "schedule"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get My Schedule by Week",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{token}}"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/employee/schedule?week_start=2024-01-08",
-							"host": ["{{baseUrl}}"],
-							"path": ["employee", "schedule"],
+							"path": ["admin", "change-requests"],
 							"query": [
 								{
-									"key": "week_start",
-									"value": "2024-01-08"
+									"key": "status",
+									"value": "pending"
 								}
 							]
 						}
-					},
-					"response": []
+					}
+				},
+				{
+					"name": "Get Change Request by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/admin/change-requests/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "change-requests", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "request-uuid-here"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Approve Change Request",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"decision_reason\": \"Approved - Valid reason provided\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/admin/change-requests/:id/approve",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "change-requests", ":id", "approve"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "request-uuid-here"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Reject Change Request",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"decision_reason\": \"Rejected - Capacity exceeded\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/admin/change-requests/:id/reject",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "change-requests", ":id", "reject"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "request-uuid-here"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Admin - Bulk Change Requests (Phase 2.2)",
+			"item": [
+				{
+					"name": "Submit Bulk Change Request",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"schedule_id\": \"72b83a75-da8a-4128-9b8b-2a218de148c6\",\n    \"employee_ids\": [\n        \"0fcdf694-f73e-4cc4-8b2c-afbaae551c8a\",\n        \"fd1e19c3-90ad-4b91-aef6-71dc322c43c5\"\n    ],\n    \"current_day\": 1,\n    \"requested_day\": 3,\n    \"reason\": \"Team offsite meeting\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/admin/bulk-change-requests",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "bulk-change-requests"]
+						}
+					}
+				},
+				{
+					"name": "Get All Bulk Change Requests",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/admin/bulk-change-requests?page=1&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "bulk-change-requests"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Bulk Change Request by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/admin/bulk-change-requests/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "bulk-change-requests", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "169f1fc8-bfd7-4729-a571-2ae0fef52412"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Approve Bulk Change Request",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"notes\": \"Approved for team meeting\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/admin/bulk-change-requests/:id/approve",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "bulk-change-requests", ":id", "approve"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "169f1fc8-bfd7-4729-a571-2ae0fef52412"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Reject Bulk Change Request",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"reason\": \"Capacity constraints - cannot accommodate all requests\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/admin/bulk-change-requests/:id/reject",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "bulk-change-requests", ":id", "reject"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "bulk-request-uuid-here"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Admin - Conflicts (Phase 2.2)",
+			"item": [
+				{
+					"name": "Get Capacity Conflicts",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/admin/conflicts?schedule_id=72b83a75-da8a-4128-9b8b-2a218de148c6",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "conflicts"],
+							"query": [
+								{
+									"key": "schedule_id",
+									"value": "72b83a75-da8a-4128-9b8b-2a218de148c6"
+								}
+							]
+						}
+					}
 				}
 			]
 		},
@@ -681,15 +922,14 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"current_day\": 0,\n    \"requested_day\": 2,\n    \"reason\": \"Need to attend important meeting\",\n    \"effective_from\": \"2024-01-15\"\n}"
+							"raw": "{\n    \"current_day\": 1,\n    \"requested_day\": 3,\n    \"reason\": \"Doctor appointment on Monday\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/employee/change-requests",
 							"host": ["{{baseUrl}}"],
 							"path": ["employee", "change-requests"]
 						}
-					},
-					"response": []
+					}
 				},
 				{
 					"name": "Get My Change Requests",
@@ -706,8 +946,30 @@
 							"host": ["{{baseUrl}}"],
 							"path": ["employee", "change-requests"]
 						}
-					},
-					"response": []
+					}
+				},
+				{
+					"name": "Get Change Request by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/employee/change-requests/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["employee", "change-requests", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "request-uuid-here"
+								}
+							]
+						}
+					}
 				},
 				{
 					"name": "Cancel Change Request",
@@ -730,156 +992,7 @@
 								}
 							]
 						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Manager - Change Requests",
-			"item": [
-				{
-					"name": "Get Team Change Requests",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{token}}"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/manager/change-requests?status=pending",
-							"host": ["{{baseUrl}}"],
-							"path": ["manager", "change-requests"],
-							"query": [
-								{
-									"key": "status",
-									"value": "pending"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Approve Change Request",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{token}}"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"decision_reason\": \"Approved - Valid reason provided\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/manager/change-requests/:id/approve",
-							"host": ["{{baseUrl}}"],
-							"path": ["manager", "change-requests", ":id", "approve"],
-							"variable": [
-								{
-									"key": "id",
-									"value": "request-uuid-here"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Reject Change Request",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{token}}"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"decision_reason\": \"Rejected - Capacity exceeded\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/manager/change-requests/:id/reject",
-							"host": ["{{baseUrl}}"],
-							"path": ["manager", "change-requests", ":id", "reject"],
-							"variable": [
-								{
-									"key": "id",
-									"value": "request-uuid-here"
-								}
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Admin - Office Capacity",
-			"item": [
-				{
-					"name": "Set Office Capacity",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{token}}"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"day_of_week\": 0,\n    \"total_seats\": 50,\n    \"reserved_seats\": 5,\n    \"effective_from\": \"2024-01-01\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/admin/capacity",
-							"host": ["{{baseUrl}}"],
-							"path": ["admin", "capacity"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Office Capacity",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{token}}"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/admin/capacity?day_of_week=0",
-							"host": ["{{baseUrl}}"],
-							"path": ["admin", "capacity"],
-							"query": [
-								{
-									"key": "day_of_week",
-									"value": "0"
-								}
-							]
-						}
-					},
-					"response": []
+					}
 				}
 			]
 		}
