@@ -46,6 +46,27 @@ class TeamService extends ApiService {
     return this.put(`/admin/teams/${id}`, teamData)
   }
 
+  async getTeamById(id) {
+    if (this.useMock) {
+      await this.mockDelay()
+      const team = this.mockData.data.find(t => t.id === id)
+      if (!team) {
+        throw new Error('Team not found')
+      }
+      return { data: team }
+    }
+    return this.get(`/admin/teams/${id}`)
+  }
+
+  async deleteTeam(id) {
+    if (this.useMock) {
+      await this.mockDelay()
+      this.mockData.data = this.mockData.data.filter(team => team.id !== id)
+      return { data: null }
+    }
+    return this.delete(`/admin/teams/${id}`)
+  }
+
   async getTeamMembers(id) {
     if (this.useMock) {
       await this.mockDelay()

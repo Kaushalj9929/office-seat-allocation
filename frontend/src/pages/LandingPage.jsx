@@ -372,12 +372,11 @@ function LandingPage() {
                     bg="white"
                     border="1px solid"
                     borderColor="gray.200"
-                    _hover={{
+                    whileHover={{
                       borderColor: `${feature.color}.400`,
-                      transform: 'translateY(-4px)',
+                      y: -4,
                       boxShadow: 'md',
                     }}
-                    transition="all 0.2s"
                     h="100%"
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -454,12 +453,12 @@ function LandingPage() {
                       borderRadius="5px"
                       bg="white"
                       boxShadow="sm"
-                      _hover={{
-                        boxShadow: 'md',
-                        transform: 'translateX(4px)',
-                      }}
                       initial={{ opacity: 0, x: -20 }}
                       whileInView={{ opacity: 1, x: 0 }}
+                      whileHover={{
+                        boxShadow: 'md',
+                        x: 4,
+                      }}
                       viewport={{ once: true }}
                       transition={{ delay: index * 0.1, duration: 0.5 }}
                     >

@@ -38,6 +38,18 @@ class EmployeeService extends ApiService {
     return this.get('/admin/employees', { params: { page, limit, ...filters } })
   }
 
+  async getEmployeeById(id) {
+    if (this.useMock) {
+      await this.mockDelay()
+      const employee = this.mockData.data.find(emp => emp.id === id)
+      if (!employee) {
+        throw new Error('Employee not found')
+      }
+      return { data: employee }
+    }
+    return this.get(`/admin/employees/${id}`)
+  }
+
   async createEmployee(employeeData) {
     if (this.useMock) {
       await this.mockDelay()

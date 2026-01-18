@@ -71,3 +71,24 @@
   background: #edf2f7;
 }
 
+/* Schedule indicators */
+.react-calendar__tile.has-office-schedule {
+  background: linear-gradient(to right, #805AD5, #D53F8C) !important;
+  color: white !important;
+}
+
+.react-calendar__tile.has-office-schedule:enabled:hover {
+  background: linear-gradient(to right, #6b46c1, #c0397f) !important;
+  color: white !important;
+}
+
+.react-calendar__tile.has-wfh-schedule {
+  background: #e2e8f0 !important;
+  color: #2d3748 !important;
+}
+
+.react-calendar__tile.has-wfh-schedule:enabled:hover {
+  background: #cbd5e0 !important;
+  color: #2d3748 !important;
+}
+

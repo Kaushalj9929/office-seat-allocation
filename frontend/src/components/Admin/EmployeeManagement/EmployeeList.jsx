@@ -31,19 +31,13 @@ import {
   HStack,
   Text,
   Badge,
-  Grid,
 } from '@chakra-ui/react'
-import Calendar from 'react-calendar'
-import 'react-calendar/dist/Calendar.css'
-import './Calendar.css'
 import { fetchEmployees, deleteEmployee, createEmployee, updateEmployee, setSelectedEmployee } from '../../../store/slices/employeeSlice'
-import { fetchSchedule } from '../../../store/slices/scheduleSlice'
 
 function EmployeeList() {
   const dispatch = useDispatch()
   const toast = useToast()
   const { employees, isLoading, error, pagination, selectedEmployee } = useSelector((state) => state.employees)
-  const { currentSchedule, isLoading: scheduleLoading } = useSelector((state) => state.schedules)
   const { isOpen: isAddOpen, onOpen: onAddOpen, onClose: onAddClose } = useDisclosure()
   const { isOpen: isEditOpen, onOpen: onEditOpen, onClose: onEditClose } = useDisclosure()
   const [formData, setFormData] = useState({
@@ -53,111 +47,10 @@ function EmployeeList() {
     status: 'active',
     password: '',
   })
-  const [selectedDate, setSelectedDate] = useState(new Date())
 
   useEffect(() => {
     dispatch(fetchEmployees({ page: 1, limit: 20 }))
-    // Fetch the latest published schedule
-    dispatch(fetchSchedule('schedule-001'))
   }, [dispatch])
-
-  // Map schedule entries to dates
-  const scheduleByDate = useMemo(() => {
-    if (!currentSchedule?.week_start_date || !currentSchedule?.entries) return {}
-
-    try {
-      const weekStart = new Date(currentSchedule.week_start_date)
-      if (isNaN(weekStart.getTime())) {
-        console.error('Invalid week_start_date:', currentSchedule.week_start_date)
-        return {}
-      }
-
-      const dateMap = {}
-
-      currentSchedule.entries.forEach(entry => {
-        try {
-          const date = new Date(weekStart)
-          date.setDate(weekStart.getDate() + entry.day_of_week)
-          const dateStr = date.toISOString().split('T')[0]
-
-          if (!dateMap[dateStr]) {
-            dateMap[dateStr] = {
-              office: [],
-              wfh: [],
-            }
-          }
-
-          const employee = employees.find(emp => emp.id === entry.employee_id)
-          if (employee) {
-            if (entry.work_type === 'office') {
-              dateMap[dateStr].office.push(employee)
-            } else if (entry.work_type === 'wfh') {
-              dateMap[dateStr].wfh.push(employee)
-            }
-          }
-        } catch (err) {
-          console.error('Error processing schedule entry:', err, entry)
-        }
-      })
-
-      return dateMap
-    } catch (err) {
-      console.error('Error processing schedule:', err)
-      return {}
-    }
-  }, [currentSchedule, employees])
-
-  // Get employees for selected date
-  const selectedDateData = useMemo(() => {
-    try {
-      if (!selectedDate) return { office: [], wfh: [] }
-      const dateStr = selectedDate.toISOString().split('T')[0]
-      return scheduleByDate[dateStr] || { office: [], wfh: [] }
-    } catch (err) {
-      console.error('Error getting selected date data:', err)
-      return { office: [], wfh: [] }
-    }
-  }, [selectedDate, scheduleByDate])
-
-  // Custom tile content for calendar
-  const tileContent = ({ date, view }) => {
-    try {
-      if (view === 'month' && date) {
-        const dateStr = date.toISOString().split('T')[0]
-        const dayData = scheduleByDate[dateStr]
-        if (dayData) {
-          const total = dayData.office.length + dayData.wfh.length
-          if (total > 0) {
-            return (
-              <Box mt={1}>
-                <Flex gap={1} justify="center" flexWrap="wrap">
-                  {dayData.office.length > 0 && (
-                    <Box
-                      w="6px"
-                      h="6px"
-                      bgGradient="linear(to-r, purple.500, pink.500)"
-                      borderRadius="full"
-                    />
-                  )}
-                  {dayData.wfh.length > 0 && (
-                    <Box
-                      w="6px"
-                      h="6px"
-                      bg="gray.400"
-                      borderRadius="full"
-                    />
-                  )}
-                </Flex>
-              </Box>
-            )
-          }
-        }
-      }
-    } catch (err) {
-      console.error('Error rendering calendar tile:', err)
-    }
-    return null
-  }
 
   const handleAddEmployee = () => {
     setFormData({ name: '', email: '', role: 'employee', status: 'active', password: '' })
@@ -327,15 +220,14 @@ function EmployeeList() {
           Add Employee
         </Button>
       </Flex>
-      <Grid templateColumns={{ base: '1fr', lg: '2fr 1fr' }} gap={4}>
-        <Box 
-          bg="white" 
-          borderRadius="5px" 
-          boxShadow="sm"
-          border="1px solid"
-          borderColor="gray.200"
-          overflow="hidden"
-        >
+      <Box 
+        bg="white" 
+        borderRadius="5px" 
+        boxShadow="sm"
+        border="1px solid"
+        borderColor="gray.200"
+        overflow="hidden"
+      >
         <Table variant="simple">
           <Thead bg="gray.50">
             <Tr>
@@ -364,12 +256,12 @@ function EmployeeList() {
                     bg={
                       employee.role === 'admin' ? 'purple.100' :
                       employee.role === 'team_lead' || employee.role === 'manager' ? 'pink.100' :
-                      'cyan.100'
+                      'purple.50'
                     }
                     color={
                       employee.role === 'admin' ? 'purple.700' :
                       employee.role === 'team_lead' || employee.role === 'manager' ? 'pink.700' :
-                      'cyan.700'
+                      'purple.600'
                     }
                   >
                     {employee.role}
@@ -435,109 +327,6 @@ function EmployeeList() {
           </Tbody>
         </Table>
       </Box>
-
-        {/* Calendar Sidebar */}
-        <Box>
-          <Box
-            bg="white"
-            borderRadius="5px"
-            boxShadow="sm"
-            border="1px solid"
-            borderColor="gray.200"
-            p={4}
-            mb={4}
-          >
-            <Heading fontSize="1rem" mb={3} fontWeight="500" color="gray.800" letterSpacing="-0.01em">
-              Schedule Calendar
-            </Heading>
-            <Box>
-              <Calendar
-                onChange={setSelectedDate}
-                value={selectedDate}
-                tileContent={tileContent}
-              />
-            </Box>
-            <VStack align="stretch" mt={3} spacing={2}>
-              <HStack spacing={2}>
-                <Box w="8px" h="8px" bgGradient="linear(to-r, purple.500, pink.500)" borderRadius="full" />
-                <Text fontSize="0.6875rem" color="gray.600" fontWeight="400">Office</Text>
-              </HStack>
-              <HStack spacing={2}>
-                <Box w="8px" h="8px" bg="gray.400" borderRadius="full" />
-                <Text fontSize="0.6875rem" color="gray.600" fontWeight="400">Work From Home</Text>
-              </HStack>
-            </VStack>
-          </Box>
-
-          {/* Selected Date Details */}
-          <Box
-            bg="white"
-            borderRadius="5px"
-            boxShadow="sm"
-            border="1px solid"
-            borderColor="gray.200"
-            p={4}
-          >
-            <Heading fontSize="0.9375rem" mb={3} fontWeight="500" color="gray.800" letterSpacing="-0.01em">
-              {selectedDate ? selectedDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : 'Select a date'}
-            </Heading>
-            {selectedDateData.office.length > 0 || selectedDateData.wfh.length > 0 ? (
-              <VStack align="stretch" spacing={3}>
-                {selectedDateData.office.length > 0 && (
-                  <Box>
-                    <Badge
-                      bgGradient="linear(to-r, purple.500, pink.500)"
-                      color="white"
-                      px={2}
-                      py={1}
-                      borderRadius="5px"
-                      fontSize="0.625rem"
-                      fontWeight="500"
-                      mb={2}
-                    >
-                      Office ({selectedDateData.office.length})
-                    </Badge>
-                    <VStack align="stretch" spacing={1.5}>
-                      {selectedDateData.office.map((emp) => (
-                        <Text key={emp.id} fontSize="0.6875rem" color="gray.700" fontWeight="400">
-                          • {emp.name}
-                        </Text>
-                      ))}
-                    </VStack>
-                  </Box>
-                )}
-                {selectedDateData.wfh.length > 0 && (
-                  <Box>
-                    <Badge
-                      bg="gray.400"
-                      color="white"
-                      px={2}
-                      py={1}
-                      borderRadius="5px"
-                      fontSize="0.625rem"
-                      fontWeight="500"
-                      mb={2}
-                    >
-                      WFH ({selectedDateData.wfh.length})
-                    </Badge>
-                    <VStack align="stretch" spacing={1.5}>
-                      {selectedDateData.wfh.map((emp) => (
-                        <Text key={emp.id} fontSize="0.6875rem" color="gray.700" fontWeight="400">
-                          • {emp.name}
-                        </Text>
-                      ))}
-                    </VStack>
-                  </Box>
-                )}
-              </VStack>
-            ) : (
-              <Text fontSize="0.6875rem" color="gray.500" fontWeight="400">
-                No schedule for this date
-              </Text>
-            )}
-          </Box>
-        </Box>
-      </Grid>
 
       {/* Add Employee Modal */}
       <Modal isOpen={isAddOpen} onClose={onAddClose} size="md">

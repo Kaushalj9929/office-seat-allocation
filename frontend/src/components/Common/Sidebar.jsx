@@ -104,8 +104,10 @@ function Sidebar() {
         icon={isCollapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
         onClick={() => setIsCollapsed(!isCollapsed)}
         position="absolute"
-        top="10px"
-        right={isCollapsed ? '8px' : '-12px'}
+        top="12px"
+        left={isCollapsed ? '50%' : 'auto'}
+        right={isCollapsed ? 'auto' : '-12px'}
+        transform={isCollapsed ? 'translateX(-50%)' : 'none'}
         size="xs"
         w="24px"
         h="24px"
@@ -118,13 +120,13 @@ function Sidebar() {
         boxShadow="sm"
         _hover={{
           bg: 'gray.50',
-          transform: 'scale(1.05)',
+          transform: isCollapsed ? 'translateX(-50%) scale(1.05)' : 'scale(1.05)',
         }}
         transition="all 0.2s"
         zIndex={10}
       />
 
-      <VStack align="stretch" spacing={2} h="100%" pt={0}>
+      <VStack align="stretch" spacing={2} h="100%" pt={isCollapsed ? '40px' : '0'}>
         {/* Navigation Links */}
         <VStack align="stretch" spacing={2} flex="1">
           {links.map((link) => {
@@ -160,7 +162,14 @@ function Sidebar() {
                 gap={isCollapsed ? 0 : 2}
                 justifyContent={isCollapsed ? 'center' : 'flex-start'}
               >
-                <Box flexShrink={0}>
+                <Box 
+                  flexShrink={0}
+                  w="28px"
+                  h="28px"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                >
                   <Icon />
                 </Box>
                 {!isCollapsed && <Text fontSize="0.75rem">{link.label}</Text>}
@@ -193,7 +202,14 @@ function Sidebar() {
             gap={isCollapsed ? 0 : 2}
             justifyContent={isCollapsed ? 'center' : 'flex-start'}
           >
-            <Box flexShrink={0}>
+            <Box 
+              flexShrink={0}
+              w="28px"
+              h="28px"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+            >
               <LogoutIcon />
             </Box>
             {!isCollapsed && <Text fontSize="0.75rem">Logout</Text>}
