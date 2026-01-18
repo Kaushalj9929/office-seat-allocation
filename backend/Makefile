@@ -1,4 +1,4 @@
-.PHONY: help build run test clean docker-build docker-run deps fmt vet dc-up dc-down dc-logs dc-ps dc-restart dc-dev-up dc-dev-down
+.PHONY: help build run test clean docker-build docker-run deps fmt vet dc-up dc-down dc-logs dc-ps dc-restart dc-dev-up dc-dev-down seed
 
 help:
 	@echo "Available commands:"
@@ -11,6 +11,7 @@ help:
 	@echo "  make deps           - Download dependencies"
 	@echo "  make fmt            - Format code"
 	@echo "  make vet            - Run go vet"
+	@echo "  make seed           - Seed database with test data"
 	@echo ""
 	@echo "Docker Compose (Development):"
 	@echo "  make dc-dev-up      - Start dependencies (postgres, redis, rabbitmq)"
@@ -73,6 +74,10 @@ vet:
 
 lint: fmt vet
 	@echo "Linting complete"
+
+seed:
+	@echo "Seeding database..."
+	@go run cmd/seed/main.go
 
 # Docker Compose - Development (dependencies only)
 dc-dev-up:

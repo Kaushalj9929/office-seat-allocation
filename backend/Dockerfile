@@ -8,6 +8,7 @@ RUN go mod download
 COPY . .
 
 RUN CGO_ENABLED=0 GOOS=linux go build -o main ./cmd/main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -o seed ./cmd/seed/main.go
 
 FROM alpine:latest
 
@@ -16,8 +17,12 @@ RUN apk --no-cache add ca-certificates
 WORKDIR /root/
 
 COPY --from=builder /app/main .
+COPY --from=builder /app/seed .
 COPY --from=builder /app/.env.example .env
+COPY --from=builder /app/entrypoint.sh .
 
-EXPOSE 8080
+RUN chmod +x entrypoint.sh
 
-CMD ["./main"]
+EXPOSE 8088
+
+CMD ["./entrypoint.sh"]
