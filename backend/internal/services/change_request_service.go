@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"fmt"
 	"office-seat-allocation/backend/internal/models"
 	"office-seat-allocation/backend/internal/repositories"
 	"time"
@@ -13,13 +14,17 @@ type ChangeRequestService struct {
 	changeRequestRepo *repositories.ChangeRequestRepository
 	scheduleRepo      *repositories.ScheduleRepository
 	capacityRepo      *repositories.OfficeCapacityRepository
+	employeeRepo      *repositories.EmployeeRepository
+	rabbitMQ          *RabbitMQService
 }
 
-func NewChangeRequestService(changeRequestRepo *repositories.ChangeRequestRepository, scheduleRepo *repositories.ScheduleRepository, capacityRepo *repositories.OfficeCapacityRepository) *ChangeRequestService {
+func NewChangeRequestService(changeRequestRepo *repositories.ChangeRequestRepository, scheduleRepo *repositories.ScheduleRepository, capacityRepo *repositories.OfficeCapacityRepository, employeeRepo *repositories.EmployeeRepository, rabbitMQ *RabbitMQService) *ChangeRequestService {
 	return &ChangeRequestService{
 		changeRequestRepo: changeRequestRepo,
 		scheduleRepo:      scheduleRepo,
 		capacityRepo:      capacityRepo,
+		employeeRepo:      employeeRepo,
+		rabbitMQ:          rabbitMQ,
 	}
 }
 
@@ -60,15 +65,11 @@ func (s *ChangeRequestService) ApproveChangeRequest(id, approverID uuid.UUID, de
 		return nil, errors.New("change request already processed")
 	}
 
-	// Validate capacity for requested day
-	// This is simplified - in production, check specific schedule
 	capacity, err := s.capacityRepo.FindByDayOfWeek(cr.RequestedDay, time.Now())
 	if err != nil {
 		return nil, errors.New("capacity not configured for requested day")
 	}
 
-	// Count current allocations (simplified check)
-	// In production, check specific schedule and week
 	if capacity.TotalSeats <= 0 {
 		return nil, errors.New("no capacity available for requested day")
 	}
@@ -82,6 +83,23 @@ func (s *ChangeRequestService) ApproveChangeRequest(id, approverID uuid.UUID, de
 
 	if err := s.changeRequestRepo.Update(cr); err != nil {
 		return nil, err
+	}
+
+	// Send notification
+	if s.rabbitMQ != nil && s.employeeRepo != nil {
+		employee, _ := s.employeeRepo.FindByID(cr.EmployeeID)
+		if employee != nil {
+			s.rabbitMQ.PublishNotification(NotificationMessage{
+				Type: "change_request_approved",
+				To:   employee.Email,
+				Data: map[string]interface{}{
+					"employee_name": employee.Name,
+					"current_day":   fmt.Sprintf("%d", cr.CurrentDay),
+					"requested_day": fmt.Sprintf("%d", cr.RequestedDay),
+				},
+				Timestamp: time.Now().Format(time.RFC3339),
+			})
+		}
 	}
 
 	return s.changeRequestRepo.FindByID(cr.ID)
@@ -105,6 +123,22 @@ func (s *ChangeRequestService) RejectChangeRequest(id, approverID uuid.UUID, dec
 
 	if err := s.changeRequestRepo.Update(cr); err != nil {
 		return nil, err
+	}
+
+	// Send notification
+	if s.rabbitMQ != nil && s.employeeRepo != nil {
+		employee, _ := s.employeeRepo.FindByID(cr.EmployeeID)
+		if employee != nil {
+			s.rabbitMQ.PublishNotification(NotificationMessage{
+				Type: "change_request_rejected",
+				To:   employee.Email,
+				Data: map[string]interface{}{
+					"employee_name": employee.Name,
+					"reason":        decisionReason,
+				},
+				Timestamp: time.Now().Format(time.RFC3339),
+			})
+		}
 	}
 
 	return s.changeRequestRepo.FindByID(cr.ID)

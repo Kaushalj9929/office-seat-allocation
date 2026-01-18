@@ -18,7 +18,7 @@ type Config struct {
 	JWTExpiry           int
 	RefreshTokenExpiry  int
 	SMTPHost            string
-	SMTPPort            int
+	SMTPPort            string
 	SMTPUser            string
 	SMTPPassword        string
 }
@@ -30,7 +30,6 @@ func Load() {
 
 	jwtExpiry, _ := strconv.Atoi(getEnv("JWT_EXPIRY", "3600"))
 	refreshExpiry, _ := strconv.Atoi(getEnv("REFRESH_TOKEN_EXPIRY", "604800"))
-	smtpPort, _ := strconv.Atoi(getEnv("SMTP_PORT", "587"))
 
 	AppConfig = &Config{
 		Env:                getEnv("GO_ENV", "development"),
@@ -42,7 +41,7 @@ func Load() {
 		JWTExpiry:          jwtExpiry,
 		RefreshTokenExpiry: refreshExpiry,
 		SMTPHost:           getEnv("SMTP_HOST", ""),
-		SMTPPort:           smtpPort,
+		SMTPPort:           getEnv("SMTP_PORT", "587"),
 		SMTPUser:           getEnv("SMTP_USER", ""),
 		SMTPPassword:       getEnv("SMTP_PASSWORD", ""),
 	}

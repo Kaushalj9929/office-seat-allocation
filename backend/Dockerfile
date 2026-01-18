@@ -19,7 +19,7 @@ WORKDIR /root/
 COPY --from=builder /app/main .
 COPY --from=builder /app/seed .
 COPY --from=builder /app/.env.example .env
-COPY --from=builder /app/entrypoint.sh .
+COPY --from=builder /app/scripts/entrypoint.sh .
 
 RUN chmod +x entrypoint.sh
 

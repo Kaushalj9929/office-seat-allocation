@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"log"
 	"office-seat-allocation/backend/internal/database"
 	"office-seat-allocation/backend/internal/handlers"
 	"office-seat-allocation/backend/internal/middleware"
@@ -25,12 +26,22 @@ func Setup() *gin.Engine {
 	changeRequestRepo := repositories.NewChangeRequestRepository(database.DB)
 	capacityRepo := repositories.NewOfficeCapacityRepository(database.DB)
 
+	// Initialize notification services
+	emailService := services.NewEmailService()
+	rabbitMQ, err := services.NewRabbitMQService()
+	if err != nil {
+		log.Printf("Warning: RabbitMQ not available: %v", err)
+		rabbitMQ = nil
+	} else {
+		rabbitMQ.ConsumeNotifications(emailService)
+	}
+
 	// Initialize services
 	authService := services.NewAuthService(employeeRepo)
 	employeeService := services.NewEmployeeService(employeeRepo)
 	teamService := services.NewTeamService(teamRepo)
-	scheduleService := services.NewScheduleService(scheduleRepo, employeeRepo, capacityRepo)
-	changeRequestService := services.NewChangeRequestService(changeRequestRepo, scheduleRepo, capacityRepo)
+	scheduleService := services.NewScheduleService(scheduleRepo, employeeRepo, capacityRepo, rabbitMQ)
+	changeRequestService := services.NewChangeRequestService(changeRequestRepo, scheduleRepo, capacityRepo, employeeRepo, rabbitMQ)
 
 	// Initialize handlers
 	healthHandler := handlers.NewHealthHandler()

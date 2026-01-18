@@ -15,13 +15,15 @@ type ScheduleService struct {
 	scheduleRepo  *repositories.ScheduleRepository
 	employeeRepo  *repositories.EmployeeRepository
 	capacityRepo  *repositories.OfficeCapacityRepository
+	rabbitMQ      *RabbitMQService
 }
 
-func NewScheduleService(scheduleRepo *repositories.ScheduleRepository, employeeRepo *repositories.EmployeeRepository, capacityRepo *repositories.OfficeCapacityRepository) *ScheduleService {
+func NewScheduleService(scheduleRepo *repositories.ScheduleRepository, employeeRepo *repositories.EmployeeRepository, capacityRepo *repositories.OfficeCapacityRepository, rabbitMQ *RabbitMQService) *ScheduleService {
 	return &ScheduleService{
 		scheduleRepo:  scheduleRepo,
 		employeeRepo:  employeeRepo,
 		capacityRepo:  capacityRepo,
+		rabbitMQ:      rabbitMQ,
 	}
 }
 
@@ -141,7 +143,28 @@ func (s *ScheduleService) PublishSchedule(id uuid.UUID) error {
 	schedule.Status = "published"
 	schedule.PublishedAt = &now
 
-	return s.scheduleRepo.Update(schedule)
+	if err := s.scheduleRepo.Update(schedule); err != nil {
+		return err
+	}
+
+	// Send notifications to all employees
+	if s.rabbitMQ != nil {
+		employees, _, _ := s.employeeRepo.FindAll(1, 1000, nil, "active")
+		for _, emp := range employees {
+			s.rabbitMQ.PublishNotification(NotificationMessage{
+				Type: "schedule_published",
+				To:   emp.Email,
+				Data: map[string]interface{}{
+					"employee_name": emp.Name,
+					"week_start":    schedule.WeekStartDate.Format("2006-01-02"),
+					"week_end":      schedule.WeekEndDate.Format("2006-01-02"),
+				},
+				Timestamp: time.Now().Format(time.RFC3339),
+			})
+		}
+	}
+
+	return nil
 }
 
 func (s *ScheduleService) GetSchedule(id uuid.UUID) (*models.Schedule, error) {
