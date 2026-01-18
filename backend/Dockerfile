@@ -12,7 +12,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o seed ./cmd/seed/main.go
 
 FROM alpine:latest
 
-RUN apk --no-cache add ca-certificates
+RUN apk --no-cache add ca-certificates dos2unix
 
 WORKDIR /root/
 
@@ -21,7 +21,7 @@ COPY --from=builder /app/seed .
 COPY --from=builder /app/.env.example .env
 COPY --from=builder /app/scripts/entrypoint.sh .
 
-RUN chmod +x entrypoint.sh
+RUN dos2unix entrypoint.sh && chmod +x entrypoint.sh
 
 EXPOSE 8088
 
