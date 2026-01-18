@@ -25,6 +25,8 @@ func Setup() *gin.Engine {
 	scheduleRepo := repositories.NewScheduleRepository(database.DB)
 	changeRequestRepo := repositories.NewChangeRequestRepository(database.DB)
 	capacityRepo := repositories.NewOfficeCapacityRepository(database.DB)
+	fairnessRepo := repositories.NewFairnessMetricRepository(database.DB)
+	bulkChangeRequestRepo := services.NewBulkChangeRequestRepository(database.DB)
 
 	// Initialize notification services
 	emailService := services.NewEmailService()
@@ -42,6 +44,9 @@ func Setup() *gin.Engine {
 	teamService := services.NewTeamService(teamRepo)
 	scheduleService := services.NewScheduleService(scheduleRepo, employeeRepo, capacityRepo, rabbitMQ)
 	changeRequestService := services.NewChangeRequestService(changeRequestRepo, scheduleRepo, capacityRepo, employeeRepo, rabbitMQ)
+	fairnessService := services.NewFairnessService(fairnessRepo, scheduleRepo, employeeRepo, teamRepo)
+	capacityManager := services.NewCapacityManager(scheduleRepo, capacityRepo, database.DB)
+	bulkChangeRequestService := services.NewBulkChangeRequestService(bulkChangeRequestRepo, changeRequestRepo, scheduleRepo, capacityManager)
 
 	// Initialize handlers
 	healthHandler := handlers.NewHealthHandler()
@@ -50,6 +55,9 @@ func Setup() *gin.Engine {
 	teamHandler := handlers.NewTeamHandler(teamService)
 	scheduleHandler := handlers.NewScheduleHandler(scheduleService)
 	changeRequestHandler := handlers.NewChangeRequestHandler(changeRequestService)
+	fairnessHandler := handlers.NewFairnessHandler(fairnessService)
+	bulkChangeRequestHandler := handlers.NewBulkChangeRequestHandler(bulkChangeRequestService)
+	conflictHandler := handlers.NewConflictHandler(capacityManager)
 
 	r.GET("/health", healthHandler.Health)
 
@@ -84,8 +92,11 @@ func Setup() *gin.Engine {
 
 			// Schedule management
 			admin.POST("/schedules/generate", scheduleHandler.GenerateSchedule)
+			admin.POST("/schedules/generate-advanced", fairnessHandler.GenerateAdvancedSchedule)
 			admin.GET("/schedules", scheduleHandler.GetAllSchedules)
 			admin.GET("/schedules/:id", scheduleHandler.GetSchedule)
+			admin.GET("/schedules/:id/fairness", fairnessHandler.GetFairnessMetrics)
+			admin.GET("/schedules/:id/fairness-report", fairnessHandler.GetFairnessReport)
 			admin.POST("/schedules/:id/publish", scheduleHandler.PublishSchedule)
 			admin.DELETE("/schedules/:id", scheduleHandler.DeleteSchedule)
 
@@ -94,6 +105,16 @@ func Setup() *gin.Engine {
 			admin.GET("/change-requests/:id", changeRequestHandler.GetChangeRequest)
 			admin.POST("/change-requests/:id/approve", changeRequestHandler.ApproveChangeRequest)
 			admin.POST("/change-requests/:id/reject", changeRequestHandler.RejectChangeRequest)
+
+			// Bulk change requests
+			admin.POST("/bulk-change-requests", bulkChangeRequestHandler.SubmitBulkRequest)
+			admin.GET("/bulk-change-requests", bulkChangeRequestHandler.ListBulkRequests)
+			admin.GET("/bulk-change-requests/:id", bulkChangeRequestHandler.GetBulkRequest)
+			admin.POST("/bulk-change-requests/:id/approve", bulkChangeRequestHandler.ApproveBulkRequest)
+			admin.POST("/bulk-change-requests/:id/reject", bulkChangeRequestHandler.RejectBulkRequest)
+
+			// Conflicts
+			admin.GET("/conflicts", conflictHandler.GetConflicts)
 		}
 
 		// Employee routes

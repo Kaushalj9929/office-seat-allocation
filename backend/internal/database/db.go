@@ -45,5 +45,11 @@ func Migrate() error {
 	if err := DB.AutoMigrate(&models.ChangeRequest{}); err != nil {
 		return err
 	}
-	return DB.AutoMigrate(&models.AuditLog{})
+	if err := DB.AutoMigrate(&models.AuditLog{}); err != nil {
+		return err
+	}
+	if err := DB.AutoMigrate(&models.FairnessMetric{}); err != nil {
+		return err
+	}
+	return DB.AutoMigrate(&models.BulkChangeRequest{})
 }

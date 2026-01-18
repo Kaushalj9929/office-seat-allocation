@@ -21,6 +21,7 @@ type ChangeRequest struct {
 	DecisionDate   *time.Time `json:"decision_date,omitempty"`
 	DecisionReason string     `json:"decision_reason,omitempty"`
 	EffectiveFrom  *time.Time `json:"effective_from,omitempty"`
+	BulkRequestID  *uuid.UUID `gorm:"type:uuid" json:"bulk_request_id,omitempty"`
 	CreatedAt      time.Time  `json:"created_at"`
 }
 

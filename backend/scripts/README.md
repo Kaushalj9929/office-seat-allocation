@@ -23,7 +23,7 @@ This directory contains shell scripts for the Office Seat Allocation System back
 ---
 
 ### 2. test_apis.sh
-**Purpose**: API testing script for Phase 1.2 endpoints
+**Purpose**: Quick API testing script for Phase 1.2 endpoints
 
 **What it does**:
 - Tests login endpoint
@@ -48,6 +48,58 @@ chmod +x scripts/test_apis.sh
 **Test Credentials**:
 - Admin: admin@example.com / admin123
 - Employee: john.doe@example.com / password123
+
+---
+
+### 3. validate_phase1.sh ⭐
+**Purpose**: Comprehensive Phase 1 validation test suite
+
+**What it does**:
+- Tests all 28 API endpoints
+- Validates authentication & authorization
+- Tests CRUD operations (Employee, Team)
+- Tests schedule generation (3 office + 2 WFH)
+- Tests change request workflow
+- Validates capacity constraints
+- Tests input validation
+- Tests RBAC (Role-Based Access Control)
+
+**Usage**:
+```bash
+# Make executable
+chmod +x scripts/validate_phase1.sh
+
+# Run comprehensive validation
+./scripts/validate_phase1.sh
+```
+
+**Test Coverage**: 31 tests
+- 7 Authentication tests
+- 6 Employee management tests
+- 5 Team management tests
+- 7 Schedule generation tests
+- 7 Change request tests
+- 7 Security & validation tests
+
+**Requirements**:
+- Backend server running on http://localhost:8088
+- `jq` installed for JSON parsing
+- `curl` installed
+
+**Output**:
+```
+✓ All tests passed!
+
+Phase 1 Implementation Status:
+✓ Authentication & Authorization
+✓ Employee Management (CRUD)
+✓ Team Management (CRUD)
+✓ Schedule Generation (3 office + 2 WFH)
+✓ Change Request Workflow
+✓ Capacity Validation
+✓ Input Validation
+✓ RBAC (Role-Based Access Control)
+```
 
 ---
 
