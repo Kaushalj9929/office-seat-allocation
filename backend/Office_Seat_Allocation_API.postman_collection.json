@@ -1,0 +1,887 @@
+{
+	"info": {
+		"name": "Office Seat Allocation API",
+		"description": "Complete API collection for Office Workspace Seat Allocation System - Phase 1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8088/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Health Check",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8088/health",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8088",
+							"path": ["health"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set('token', jsonData.access_token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@example.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "login"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refresh_token\": \"eyJhbGc...\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/refresh",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "refresh"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/auth/logout",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "logout"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin - Employees",
+			"item": [
+				{
+					"name": "Get All Employees",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/admin/employees?page=1&limit=20",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "employees"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "20"
+								},
+								{
+									"key": "team_id",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "status",
+									"value": "active",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Employee by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/admin/employees/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "employees", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "employee-uuid-here"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Employee",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"john.doe@example.com\",\n    \"name\": \"John Doe\",\n    \"password\": \"password123\",\n    \"team_id\": \"team-uuid-here\",\n    \"role\": \"employee\",\n    \"status\": \"active\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/admin/employees",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "employees"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Employee",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"John Doe Updated\",\n    \"team_id\": \"team-uuid-here\",\n    \"status\": \"active\",\n    \"role\": \"team_lead\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/admin/employees/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "employees", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "employee-uuid-here"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Employee",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/admin/employees/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "employees", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "employee-uuid-here"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Bulk Import Employees",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"employees\": [\n        {\n            \"email\": \"emp1@example.com\",\n            \"name\": \"Employee One\",\n            \"password\": \"password123\",\n            \"team_id\": \"team-uuid-here\",\n            \"role\": \"employee\"\n        },\n        {\n            \"email\": \"emp2@example.com\",\n            \"name\": \"Employee Two\",\n            \"password\": \"password123\",\n            \"team_id\": \"team-uuid-here\",\n            \"role\": \"employee\"\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/admin/employees/bulk-import",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "employees", "bulk-import"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin - Teams",
+			"item": [
+				{
+					"name": "Get All Teams",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/admin/teams?page=1&limit=20",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "teams"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "20"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Team by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/admin/teams/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "teams", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "team-uuid-here"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Team",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Engineering Team\",\n    \"description\": \"Software Engineering Team\",\n    \"team_lead_id\": \"employee-uuid-here\",\n    \"preferences\": {\n        \"preferred_days\": [0, 2, 4]\n    }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/admin/teams",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "teams"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Team",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Engineering Team Updated\",\n    \"description\": \"Updated description\",\n    \"team_lead_id\": \"employee-uuid-here\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/admin/teams/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "teams", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "team-uuid-here"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Team",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/admin/teams/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "teams", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "team-uuid-here"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Team Members",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/admin/teams/:id/members",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "teams", ":id", "members"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "team-uuid-here"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin - Schedules",
+			"item": [
+				{
+					"name": "Generate Schedule",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"week_start_date\": \"2024-01-08\",\n    \"week_end_date\": \"2024-01-12\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/admin/schedules/generate",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "schedules", "generate"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Schedule by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/admin/schedules/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "schedules", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "schedule-uuid-here"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Schedules",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/admin/schedules?status=published",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "schedules"],
+							"query": [
+								{
+									"key": "status",
+									"value": "published"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Schedule",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"entries\": [\n        {\n            \"employee_id\": \"employee-uuid-here\",\n            \"day_of_week\": 0,\n            \"work_type\": \"office\"\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/admin/schedules/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "schedules", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "schedule-uuid-here"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Publish Schedule",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/admin/schedules/:id/publish",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "schedules", ":id", "publish"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "schedule-uuid-here"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Schedule Entries",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/admin/schedules/:id/entries",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "schedules", ":id", "entries"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "schedule-uuid-here"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Employee - Schedule",
+			"item": [
+				{
+					"name": "Get My Schedule",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/employee/schedule",
+							"host": ["{{baseUrl}}"],
+							"path": ["employee", "schedule"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Schedule by Week",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/employee/schedule?week_start=2024-01-08",
+							"host": ["{{baseUrl}}"],
+							"path": ["employee", "schedule"],
+							"query": [
+								{
+									"key": "week_start",
+									"value": "2024-01-08"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Employee - Change Requests",
+			"item": [
+				{
+					"name": "Submit Change Request",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"current_day\": 0,\n    \"requested_day\": 2,\n    \"reason\": \"Need to attend important meeting\",\n    \"effective_from\": \"2024-01-15\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/employee/change-requests",
+							"host": ["{{baseUrl}}"],
+							"path": ["employee", "change-requests"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Change Requests",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/employee/change-requests",
+							"host": ["{{baseUrl}}"],
+							"path": ["employee", "change-requests"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Change Request",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/employee/change-requests/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["employee", "change-requests", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "request-uuid-here"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Manager - Change Requests",
+			"item": [
+				{
+					"name": "Get Team Change Requests",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/manager/change-requests?status=pending",
+							"host": ["{{baseUrl}}"],
+							"path": ["manager", "change-requests"],
+							"query": [
+								{
+									"key": "status",
+									"value": "pending"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Approve Change Request",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"decision_reason\": \"Approved - Valid reason provided\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/manager/change-requests/:id/approve",
+							"host": ["{{baseUrl}}"],
+							"path": ["manager", "change-requests", ":id", "approve"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "request-uuid-here"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reject Change Request",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"decision_reason\": \"Rejected - Capacity exceeded\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/manager/change-requests/:id/reject",
+							"host": ["{{baseUrl}}"],
+							"path": ["manager", "change-requests", ":id", "reject"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "request-uuid-here"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin - Office Capacity",
+			"item": [
+				{
+					"name": "Set Office Capacity",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"day_of_week\": 0,\n    \"total_seats\": 50,\n    \"reserved_seats\": 5,\n    \"effective_from\": \"2024-01-01\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/admin/capacity",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "capacity"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Office Capacity",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/admin/capacity?day_of_week=0",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "capacity"],
+							"query": [
+								{
+									"key": "day_of_week",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
